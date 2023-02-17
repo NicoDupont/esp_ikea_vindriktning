@@ -4,6 +4,7 @@ Domotisation du ikea vindriktning qui possede un sensor de particule 2.5 pem1006
 Ajouts :
  - BME280 (temperature+humidité+pression)
  - CCS811 (eCo2+Tvoc)
+ - MICS-5524 (CO)
 
 ### Liste des composants :
 
@@ -13,6 +14,8 @@ Ajouts :
 - 1x fusible 20x5 0.5A + porte fusible
 - 1x BME280
 - 1x CCS811
+- 1x ADS1115 + levelshifter
+- 1x MICS-5524
 - 1x pcb 2.54mm, du cable, etc...
 
 ### Cablage :
