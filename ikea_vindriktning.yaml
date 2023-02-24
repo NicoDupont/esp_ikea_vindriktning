@@ -1,0 +1,235 @@
+substitutions:
+  friendly_name: "Esp Salon Ikea Vindriktning"
+  friendly_name_wifiap: "Esp-Salon-Ikea-Vindriktning-Hotspot"
+  interval_update_court: "2s"
+  interval_update_normal: "60s"
+  interval_update_long: "180s"
+
+esphome:
+  name: esp-salon-ikea-vindriktning
+  comment: esp8266 esp01s ikea vindriktning 2.5µm + temp + humi + eco2 + tvoc + co
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+  #baud_rate: 0   # disable logging via UART, help to avoid numerous crash with ESP_LOGD
+  #level: INFO   # INFO for less log, put DEBUG to view all the linky's "étiquettes" received  in the logs
+  esp8266_store_log_strings_in_flash: False     #  :doc:`recommanded for ESP8266 </components/sensor/custom>`
+
+# Enable Home Assistant API
+api:
+#  encryption:
+#    key: "zzHMGE342mPJmKen2n2lwx7Dzv3cYR72L9Mm/3U0nQ8="
+
+ota:
+  password: "8ae1ac436b21b61ee6293f7afc5a5869"
+
+wifi:
+  networks:
+  - ssid: !secret wifi_maison_ssid
+    password: !secret wifi_maison_password
+  - ssid: !secret wifi_maison_2_ssid
+    password: !secret wifi_maison_2_password
+
+  power_save_mode: none
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp-Salon-Ikea-Vindriktning"
+    password: !secret wifi_esp_ap_password
+
+captive_portal:
+
+time:
+  - platform: homeassistant
+    timezone: "Europe/Paris"
+    id: ha_time
+
+#--------------------------------------
+# enable control via web server if home assistant is dead
+web_server:
+  port: 80
+  ota: True
+  version: 1 # Defaults to 2 => 1 pour l'esp01s ou les esp8266 en général car moins gourmand
+
+#--------------------------------------
+i2c: #i2c sur gpio 0 et 2 (BME280 + CCS811)
+  sda: 0
+  scl: 2
+  scan: True
+  id: bus_a # il y a un seul bus ici donc pas vraiment necessaire
+
+#i2c ads1115 pour lire le capteur CO adr reliee a gnd
+ads1115:
+  - address: 0x48
+
+#--------------------------------------
+uart: #pm1006
+  rx_pin: 1
+  baud_rate: 9600
+  id: ikea
+
+#--------------------------------------
+binary_sensor:
+
+  - platform: status
+    name: "${friendly_name} Status"
+    id : EspSalonIkeaVindriktningStatus
+    
+#--------------------------------------    
+text_sensor:
+  - platform: template
+    name: "Uptime"
+    id: uptime_human
+    icon: mdi:clock-start
+    
+  - platform: wifi_info
+    ip_address:
+      name: "${friendly_name} Local IP"
+      id: EspSalonIkeaVindriktningLocalIP
+    ssid:
+      name: "${friendly_name} SSID"
+      id: EspSalonIkeaVindriktningSSID
+
+#--------------------------------------
+button:
+  - platform: restart
+    name: "${friendly_name} Restart"
+    id: EspSalonIkeaVindriktningRestart
+  - platform: shutdown
+    name: "${friendly_name} Shutdown"
+    id: EspSalonIkeaVindriktningShutdown
+  - platform: safe_mode
+    name: "${friendly_name} Safe Mode"
+    id: EspSalonIkeaVindriktningSafeMode
+    
+#--------------------------------------
+sensor:
+
+#PM1006 passive mod (only read from the ikea vindriktning board)
+  - platform: pm1006
+    uart_id: ikea
+    pm_2_5:
+      name: "${friendly_name} 2.5µm Concentration"
+      id: EspSalonIkeaVindriktning25ParticuleConcentration
+      device_class: pm25
+      unit_of_measurement: 'µg/m³'
+      state_class: "measurement"
+      accuracy_decimals: 0
+      icon: 'mdi:blur'
+
+#BME280
+  - platform: bme280
+    temperature:
+      name: "${friendly_name} Temperature"
+      id: EspSalonIkeaVindriktningTemp
+      device_class: temperature
+      oversampling: 16x
+      accuracy_decimals: 1
+      state_class: "measurement"
+    pressure:
+      name: "${friendly_name} Pression Atmo"
+      id: EspSalonIkeaVindriktningAtmo
+      oversampling: 16x
+      device_class: pressure
+      accuracy_decimals: 1
+      state_class: "measurement"
+    humidity:
+      name: "${friendly_name} Humidity"
+      id: EspSalonIkeaVindriktningHumi
+      accuracy_decimals: 1
+      device_class: humidity
+      oversampling: 16x
+      state_class: "measurement"
+    address: 0x76 #or 0x76/0x77
+    i2c_id: bus_a
+    update_interval: ${interval_update_normal}
+
+#CCS811 baseline a recuperer dans le log. wak reliee a gnd
+  - platform: ccs811
+    eco2:
+      id: "EspSalonIkeaVindriktningeCO2"
+      name: "${friendly_name} eCO2"
+      device_class: carbon_dioxide
+      unit_of_measurement: 'ppm'
+      state_class: "measurement"
+      accuracy_decimals: 0
+    tvoc:
+      id:  "EspSalonIkeaVindriktningTvoc"
+      name: "${friendly_name} Tvoc"
+      unit_of_measurement: 'ppb'
+      state_class: "measurement"
+      accuracy_decimals: 0
+    address: 0x5A
+    i2c_id: bus_a
+    update_interval: ${interval_update_normal}
+    temperature: EspSalonIkeaVindriktningTemp
+    humidity: EspSalonIkeaVindriktningHumi
+
+#Sortie analogique MICS5524 reliee sur a0 et en reliée a GND (active le prechauffage)
+  - platform: ads1115
+    multiplexer: 'A0_GND'
+    gain: 6.144 
+    name: "${friendly_name} A0 Voltage"
+    id: EspSalonIkeaVindriktningA0Voltage
+    device_class: voltage
+    unit_of_measurement: V
+    state_class: "measurement"
+    update_interval: ${interval_update_normal}
+
+# pression eau canal apres filtre
+  - platform: ads1115
+    multiplexer: 'A0_GND'
+    gain: 6.144 
+    name: "${friendly_name} CO"
+    id: "EspSalonIkeaVindriktningCO"
+    device_class: CARBON_MONOXIDE
+    state_class: "measurement"
+    icon: "mdi:gauge"
+    accuracy_decimals: 0
+    filters:
+      - calibrate_linear:
+            - 0 -> 0
+            - 5 -> 1000
+      - sliding_window_moving_average:
+          window_size: 7
+          send_every: 1
+      #pas de données avant 3 minutes d'uptime. temps de chauffe du capteur
+      - lambda: if (id(EspSalonIkeaVindriktningUptime).state>(180+20)) { return(x); } else { return {}; }    
+    unit_of_measurement: ppm
+    update_interval: ${interval_update_normal}   
+
+#--------------------------------------
+#wifi
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    id: EspSalonIkeaVindriktningWiFiSignal
+    update_interval: ${interval_update_long}
+
+#--------------------------------------
+#Uptime decomposé     
+  - platform: uptime
+    name: "${friendly_name} Uptime"
+    id: EspSalonIkeaVindriktningUptime
+    #update_interval: ${interval_update_long}
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: uptime_human
+            state: !lambda |-
+              int seconds = round(id(EspSalonIkeaVindriktningUptime).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              return (
+                (days ? to_string(days) + "d " : "") +
+                (hours ? to_string(hours) + "h " : "") +
+                (minutes ? to_string(minutes) + "m " : "")
+              ).c_str();
+
+
+              
