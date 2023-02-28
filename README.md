@@ -11,7 +11,7 @@ Ajouts :
 ### Liste des composants :
 
 - 1x ftdi 3.3v (pour le 1er flash)
-- 1x esp01s + breakout board
+- 1x esp8266 esp01s + breakout board
 - 1x convertisseur dc 5v=>3.3v (ams1117)
 - 1x porte fusible sur fil 0.5a
 - 1x BME280
@@ -21,7 +21,7 @@ Ajouts :
 ### Cablage :
 
 GPIO 0 et 2 => i2c  
-GPIO 1 => pem1006
+GPIO 1 => pem1006 (lecture uniquement via la liaison série)
 
 ![links](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/shema.png?raw=true)
 
@@ -42,6 +42,7 @@ GPIO 1 => pem1006
 - Home Assistant : [HomeAssistant](https://www.home-assistant.io/) 
 - Esphome : [Esphome](https://esphome.io/index.html) 
 - Esphome-flasher : [Esphome-flasher](https://github.com/esphome/esphome-flasher/releases)
+- Lib dfrobot pour le mics5524 : [dfrobot](https://wiki.dfrobot.com/Fermion__MEMS_Gas_Sensor___MiCS-5524_SKU_SEN0440)
     
 
 

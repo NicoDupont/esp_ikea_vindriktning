@@ -2,7 +2,7 @@ substitutions:
   friendly_name: "Esp Salon Ikea Vindriktning"
   friendly_name_wifiap: "Esp-Salon-Ikea-Vindriktning-Hotspot"
   interval_update_court: "2s"
-  interval_update_normal: "60s"
+  interval_update_normal: "20s"
   interval_update_long: "180s"
 
 esphome:
@@ -160,6 +160,7 @@ sensor:
       id:  "EspSalonIkeaVindriktningTvoc"
       name: "${friendly_name} Tvoc"
       unit_of_measurement: 'ppb'
+      icon: mdi:air-filter
       state_class: "measurement"
       accuracy_decimals: 0
     address: 0x5A
@@ -178,26 +179,53 @@ sensor:
     unit_of_measurement: V
     state_class: "measurement"
     update_interval: ${interval_update_normal}
+    filters:
+      - sliding_window_moving_average:
+          window_size: 7
+          send_every: 1
+      - lambda: return(x);
 
-# pression eau canal apres filtre
-  - platform: ads1115
-    multiplexer: 'A0_GND'
-    gain: 6.144 
+#float DFRobot_MICS::getCarbonMonoxide(float data) 
+#{
+#  if(data > 0.425)
+#    return 0.0;
+#  float co = (0.425 - data) / 0.000405;
+#  if(co > 1000.0)
+#    return 1000.0;
+#  if(co < 1.0) 
+#    return 0.0;
+#  return co;
+#}
+# valeur co formule reprise de la librairie dfrobot  https://wiki.dfrobot.com/Fermion__MEMS_Gas_Sensor___MiCS-5524_SKU_SEN0440
+  - platform: template
+    #platform: ads1115
+    #multiplexer: 'A0_GND'
+    #gain: 6.144 
     name: "${friendly_name} CO"
     id: "EspSalonIkeaVindriktningCO"
     device_class: CARBON_MONOXIDE
     state_class: "measurement"
-    icon: "mdi:gauge"
+    icon: "mdi:molecule-co"
     accuracy_decimals: 0
-    filters:
-      - calibrate_linear:
-            - 0 -> 0
-            - 5 -> 1000
-      - sliding_window_moving_average:
-          window_size: 7
-          send_every: 1
-      #pas de données avant 3 minutes d'uptime. temps de chauffe du capteur
-      - lambda: if (id(EspSalonIkeaVindriktningUptime).state>(180+20)) { return(x); } else { return {}; }    
+#    filters:
+#      - calibrate_linear:
+#            - 0 -> 0
+#            - 5 -> 1000
+#      - sliding_window_moving_average:
+#          window_size: 7
+#          send_every: 1
+#      #pas de données avant 3 minutes d'uptime. temps de chauffe du capteur
+#      - lambda: if (id(EspSalonIkeaVindriktningUptime).state>(180+20)) { return(x); } else { return {}; }    
+    lambda: !lambda |-
+        float v0 = id(EspSalonIkeaVindriktningA0Voltage).state;
+        float rawco = (0.425 - v0) / 0.000405;
+        float ppmco = 0.0;
+        if ( v0 > 0.425 or rawco < 1 ) { ppmco = 0.0; }
+          else { if ( rawco > 1000 ) { ppmco = 1000.0; } 
+                  else { ppmco = rawco;} } 
+        if (id(EspSalonIkeaVindriktningUptime).state>200) 
+        { return (ppmco); }
+        else { return {}; }
     unit_of_measurement: ppm
     update_interval: ${interval_update_normal}   
 
