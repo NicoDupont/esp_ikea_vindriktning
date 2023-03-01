@@ -27,7 +27,7 @@ GPIO 1 => pem1006 (lecture uniquement via la liaison série)
 
 ### Montage :
 
-![proto](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbproto.jpg?raw=true)
+![proto](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/proto.jpg?raw=true)
 ![pcb](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbfinal.jpg?raw=true)
 ![integration](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbintegre.jpg?raw=true)
 
