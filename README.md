@@ -14,27 +14,29 @@ Ajouts :
 - 1x esp8266 esp01s + breakout board
 - 1x convertisseur dc 5v=>3.3v (ams1117)
 - 1x porte fusible sur fil 0.5a
-- 1x BME280
-- 1x CCS811
-- 1x ADS1115 + levelshifter
-- 1x MICS-5524
+- 1x BME280 (3.3v)
+- 1x CCS811 (3.3v)
+- 1x ADS1115 (5v) + levelshifter (i2c 3.3v<=>5v)
+- 1x MICS-5524 (5v)
 ### Cablage :
 
 GPIO 0 et 2 => i2c  
 GPIO 1 => pem1006 (lecture uniquement via la liaison série)
+CCS811 => baseline a renseigner. voir la [doc esphome](https://esphome.io/components/sensor/ccs811.html) 
 
 ![links](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/shema.png?raw=true)
 
 ### Montage :
 
-![proto](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/proto.jpg?raw=true)
-![pcb](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbfinal.jpg?raw=true)
-![integration](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbintegre.jpg?raw=true)
+Prototype :  
+![proto](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/proto.jpg?raw=true)  
+Pcb Soudé :  
+![pcb](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbfinal.jpg?raw=true)  
+Integration dans le boitier :  
+![integration](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbintegre.jpg?  raw=true)
 
 
 ### HomeAssistant :
-
-#### Entités :
 
 ![links](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/entite.png?raw=true)
 
