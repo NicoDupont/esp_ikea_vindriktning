@@ -31,7 +31,7 @@ CCS811 => baseline a renseigner. voir la [doc esphome](https://esphome.io/compon
 Prototype :  
 ![proto](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/proto.jpg?raw=true)  
 Pcb Soudé :  
-![pcb](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbfinal.jpg?raw=true)  
+![pcb](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbfinal.jpeg?raw=true)  
 Integration dans le boitier :  
 ![integration](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbintegre.jpg?  raw=true)
 
