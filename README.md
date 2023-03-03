@@ -33,7 +33,7 @@ Prototype :
 Pcb Soudé :  
 ![pcb](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbfinal.jpeg?raw=true)  
 Integration dans le boitier :  
-![integration](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbintegre.jpg?  raw=true)
+![integration](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/pcbintegre.jpg?raw=true)
 
 
 ### HomeAssistant :
