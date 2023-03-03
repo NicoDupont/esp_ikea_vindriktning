@@ -3,9 +3,9 @@
 Domotisation du ikea vindriktning qui possede un sensor de particule 2.5 pem1006.  
 
 Ajouts :
- - BME280 (temperature+humidité+pression)
+ - BME280 (temperature+humidité+pression) 
  - CCS811 (eCo2+Tvoc)
- - MICS-5524 (CO)
+ - MICS-5524 (CO) formule de calcul pour le CO a confirmer
  - Esp8266 / Esp01s firmware esphome
 
 ### Liste des composants :

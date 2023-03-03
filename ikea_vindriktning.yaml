@@ -49,10 +49,10 @@ time:
 
 #--------------------------------------
 # enable control via web server if home assistant is dead
-web_server:
-  port: 80
-  ota: True
-  version: 1 # Defaults to 2 => 1 pour l'esp01s ou les esp8266 en général car moins gourmand
+#web_server:
+#  port: 80
+#  ota: True
+#  version: 1 # Defaults to 2 => 1 pour l'esp01s ou les esp8266 en général car moins gourmand
 
 #--------------------------------------
 i2c: #i2c sur gpio 0 et 2 (BME280 + CCS811)
@@ -164,6 +164,7 @@ sensor:
       state_class: "measurement"
       accuracy_decimals: 0
     address: 0x5A
+    #baseline: xxxx 
     i2c_id: bus_a
     update_interval: ${interval_update_normal}
     temperature: EspSalonIkeaVindriktningTemp
@@ -206,6 +207,8 @@ sensor:
     device_class: CARBON_MONOXIDE
     state_class: "measurement"
     icon: "mdi:molecule-co"
+    unit_of_measurement: ppm
+    update_interval: ${interval_update_normal}   
     accuracy_decimals: 0
 #    filters:
 #      - calibrate_linear:
@@ -226,8 +229,6 @@ sensor:
         if (id(EspSalonIkeaVindriktningUptime).state>200) 
         { return (ppmco); }
         else { return {}; }
-    unit_of_measurement: ppm
-    update_interval: ${interval_update_normal}   
 
 #--------------------------------------
 #wifi
