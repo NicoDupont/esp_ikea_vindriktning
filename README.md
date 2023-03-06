@@ -13,7 +13,6 @@ Ajouts :
 - 1x ftdi 3.3v (pour le 1er flash)
 - 1x esp8266 esp01s + breakout board
 - 1x convertisseur dc 5v=>3.3v (ams1117)
-- 1x porte fusible sur fil 0.5a
 - 1x BME280 (3.3v)
 - 1x CCS811 (3.3v)
 - 1x ADS1115 (5v) + levelshifter (i2c 3.3v<=>5v)
