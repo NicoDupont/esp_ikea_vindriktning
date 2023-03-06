@@ -1,6 +1,6 @@
 ## Domotisation et amélioration du module Ikea Vindriktning
 
-Domotisation du ikea vindriktning qui possede un sensor de particule 2.5 pem1006.  
+Domotisation du ikea vindriktning qui possede un sensor de particule 2.5 pm1006.  
 
 Ajouts :
  - BME280 (temperature+humidité+pression) 
@@ -21,7 +21,7 @@ Ajouts :
 ### Cablage :
 
 GPIO 0 et 2 => i2c  
-GPIO 1 => pem1006 (lecture uniquement via la liaison série)
+GPIO 1 => pm1006 (lecture uniquement via la liaison série)  
 CCS811 => baseline a renseigner. voir la [doc esphome](https://esphome.io/components/sensor/ccs811.html) 
 
 ![links](https://github.com/NicoDupont/esp_ikea_vindriktning/blob/main/img/shema.png?raw=true)
