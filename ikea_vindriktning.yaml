@@ -14,8 +14,8 @@ esp8266:
 
 # Enable logging
 logger:
-  #baud_rate: 0   # disable logging via UART, help to avoid numerous crash with ESP_LOGD
-  #level: INFO   # INFO for less log, put DEBUG to view all the linky's "étiquettes" received  in the logs
+  baud_rate: 0   # disable logging via UART, help to avoid numerous crash with ESP_LOGD
+  level: INFO   # INFO for less log, put DEBUG to view all the linky's "étiquettes" received  in the logs
   esp8266_store_log_strings_in_flash: False     #  :doc:`recommanded for ESP8266 </components/sensor/custom>`
 
 # Enable Home Assistant API
@@ -32,6 +32,7 @@ wifi:
     password: !secret wifi_maison_password
   - ssid: !secret wifi_maison_2_ssid
     password: !secret wifi_maison_2_password
+  reboot_timeout : 2min #reboot si pas de wifi actif
 
   power_save_mode: none
 
@@ -159,12 +160,12 @@ sensor:
     tvoc:
       id:  "EspSalonIkeaVindriktningTvoc"
       name: "${friendly_name} Tvoc"
-      unit_of_measurement: 'ppb'
+      #unit_of_measurement: 'ppb'
       icon: mdi:air-filter
       state_class: "measurement"
       accuracy_decimals: 0
     address: 0x5A
-    #baseline: xxxx 
+    baseline: 0xFEBA
     i2c_id: bus_a
     update_interval: ${interval_update_normal}
     temperature: EspSalonIkeaVindriktningTemp
@@ -219,13 +220,19 @@ sensor:
 #          send_every: 1
 #      #pas de données avant 3 minutes d'uptime. temps de chauffe du capteur
 #      - lambda: if (id(EspSalonIkeaVindriktningUptime).state>(180+20)) { return(x); } else { return {}; }    
+#    lambda: !lambda |-
+#        float v0 = id(EspSalonIkeaVindriktningA0Voltage).state;
+#        float rawco = (0.425 - v0) / 0.000405;
+#        float ppmco = 0.0;
+#        if ( v0 > 0.425 or rawco < 1 ) { ppmco = 0.0; }
+#          else { if ( rawco > 1000 ) { ppmco = 1000.0; } 
+#                  else { ppmco = rawco;} } 
+#        if (id(EspSalonIkeaVindriktningUptime).state>200) 
+#        { return (ppmco); }
+#        else { return {}; }
     lambda: !lambda |-
         float v0 = id(EspSalonIkeaVindriktningA0Voltage).state;
-        float rawco = (0.425 - v0) / 0.000405;
-        float ppmco = 0.0;
-        if ( v0 > 0.425 or rawco < 1 ) { ppmco = 0.0; }
-          else { if ( rawco > 1000 ) { ppmco = 1000.0; } 
-                  else { ppmco = rawco;} } 
+        float ppmco = v0 * (10000*(0.425/32767));
         if (id(EspSalonIkeaVindriktningUptime).state>200) 
         { return (ppmco); }
         else { return {}; }
